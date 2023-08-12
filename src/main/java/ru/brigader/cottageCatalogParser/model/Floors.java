@@ -8,5 +8,6 @@ public enum Floors {
     ONEPLUSMANSARD, // для Layout подразумевается мансарда после первого этажа
     TWOPLUSMANSARD, // для Layout подразумевается мансарда после второго этажа
     BASEMENT, // цокольный этаж, подвал, подпол и т.д.
-    OPERATEDROOF // плоская эксплуатируемая кровля
+    OPERATEDROOF, // плоская эксплуатируемая кровля
+    UNDEFINEDFLOOR
 }
