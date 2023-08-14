@@ -1,7 +1,8 @@
-package ru.brigader.cottageCatalogParser.model.Image;
+package ru.brigader.cottageCatalogParser.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import ru.brigader.cottageCatalogParser.model.Parameters.ImageType;
 
 @Getter
 @Setter

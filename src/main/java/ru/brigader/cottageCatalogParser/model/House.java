@@ -4,8 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.brigader.cottageCatalogParser.model.Image.ImageHouse;
-import ru.brigader.cottageCatalogParser.model.houseParameters.*;
+import ru.brigader.cottageCatalogParser.model.Parameters.*;
 
 import java.util.List;
 
@@ -14,10 +13,9 @@ import java.util.List;
 @ToString
 public class House {
 
-    int id;  ///
-    String title; ///
-    String titleEng;//перевод русского названия  ///
-    List<ImageHouse> imageHouseList;
+    int id;
+    String title;
+    String titleEng;
     Double livingArea;
     Double width;
     Double depth;
@@ -33,7 +31,6 @@ public class House {
     String technologyOrg;
     Integer rooms;
     Integer bathrooms;
-    List<SignatureLayout> signatureLayoutList; // размеры помещений из таблицы около картинок
     @Builder.Default
     Boolean hasGarage;
     Garage garage;
@@ -45,7 +42,12 @@ public class House {
     boolean operatedRoof = false;
     @Builder.Default
     boolean operatedLoft = false; //эксплуатируемый чердак - как мансарда, но без комнат
-    String urlSource;
     Double rating;
     Integer voted;
+    List<SignatureLayout> signatureLayoutList; // размеры помещений из таблицы около картинок
+    String urlSource;
+    List<ImageHouse> imageHouseList;
+    List <ImageType> findedImageTypes;
+    String dirSaveImages;
+
 }

@@ -1,4 +1,4 @@
-package ru.brigader.cottageCatalogParser.model.Image;
+package ru.brigader.cottageCatalogParser.model.Parameters;
 
 public enum ImageType {
     EXTERIOR,

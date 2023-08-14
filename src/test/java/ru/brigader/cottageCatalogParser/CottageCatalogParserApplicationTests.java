@@ -1,17 +1,14 @@
 package ru.brigader.cottageCatalogParser;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.brigader.cottageCatalogParser.model.Floors;
+import ru.brigader.cottageCatalogParser.model.Parameters.Floors;
 import ru.brigader.cottageCatalogParser.model.House;
-import ru.brigader.cottageCatalogParser.model.houseParameters.ArchitectureStyle;
-import ru.brigader.cottageCatalogParser.model.houseParameters.Garage;
-import ru.brigader.cottageCatalogParser.model.houseParameters.RoofType;
-import ru.brigader.cottageCatalogParser.model.houseParameters.Technology;
-import ru.brigader.cottageCatalogParser.parser.HousePageParser;
+import ru.brigader.cottageCatalogParser.model.Parameters.ArchitectureStyle;
+import ru.brigader.cottageCatalogParser.model.Parameters.Garage;
+import ru.brigader.cottageCatalogParser.model.Parameters.RoofType;
+import ru.brigader.cottageCatalogParser.model.Parameters.Technology;
 import ru.brigader.cottageCatalogParser.parser.HousePageParserTooba;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

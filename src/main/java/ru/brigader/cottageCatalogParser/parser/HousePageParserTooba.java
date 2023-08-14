@@ -7,12 +7,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import ru.brigader.cottageCatalogParser.model.Image.ImageDownload;
-import ru.brigader.cottageCatalogParser.model.Image.ImageHouse;
-import ru.brigader.cottageCatalogParser.model.Image.ImageType;
+import ru.brigader.cottageCatalogParser.model.ImageHouse;
+import ru.brigader.cottageCatalogParser.model.Parameters.ImageType;
 import com.ibm.icu.text.Transliterator;
 import org.apache.commons.lang3.StringUtils;
-import ru.brigader.cottageCatalogParser.model.houseParameters.*;
+import ru.brigader.cottageCatalogParser.model.Parameters.*;
 
 
 import java.io.IOException;
@@ -23,30 +22,28 @@ import java.util.*;
 @Component
 public class HousePageParserTooba implements HousePageParser {
 
-    ImageDownload imageDownload = new ImageDownload();
-
     @Override
     public House parse(House house) {
 
-     //   House house = new House();
-      //  house.setId(id);
-      //  house.setTitle(title);
         house.setTitleEng(transliterate(house.getTitle()));
-       String url = house.getUrlSource();
-
 
         try {
-            Document document = Jsoup.connect(url).get();
+            Document document = Jsoup.connect(house.getUrlSource()).get();
 
+            // парсинг картинок
             LinkedList<ImageHouse> imageHouseList = new LinkedList<>();
-
-           /*
-            imageHouseList = addAndSave(imageHouseList, parseFloorsAndModel3DImages(document), id, title);
-            imageHouseList = addAndSave(imageHouseList, parseSituationalPlan(document), id, title);
-            imageHouseList = addAndSave(imageHouseList, parseFacades(document), id, title);
-            imageHouseList = addAndSave(imageHouseList, parseSection(document), id, title);
+            List<ImageType> findedImageTypes = new LinkedList<>();
+            LinkedList<ImageHouse> floorsAndModel3DImages = parseFloorsAndModel3DImages(document);
+            LinkedList<ImageHouse> situationalPlanImages = parseSituationalPlan(document);
+            LinkedList<ImageHouse> facadesImages = parseFacades(document);
+            LinkedList<ImageHouse> sectionImages = parseSection(document);
+            imageHouseList.addAll(floorsAndModel3DImages);
+            imageHouseList.addAll(facadesImages);
+            imageHouseList.addAll(sectionImages);
+            imageHouseList.addAll(situationalPlanImages);
             house.setImageHouseList(imageHouseList);
-*/
+
+
             //жилая площадь
             String cssQueryLivingArea = "span.label:contains(Pow. użytkowa) + span.val";
             house.setLivingArea(extractDoubleValue(parseParameterString(document, cssQueryLivingArea)));
@@ -142,11 +139,11 @@ public class HousePageParserTooba implements HousePageParser {
         } catch (
                 IOException e) {
             e.printStackTrace();
-            // Обработка исключения при соединении с сайтом
         }
 
         return house;
     }
+
     private String parseParameterString(Document document, String cssQuery) {
         try {
             Element element = document.selectFirst(cssQuery);
@@ -175,7 +172,6 @@ public class HousePageParserTooba implements HousePageParser {
                     images.add(imageHouse);
                 }
             }
-            log.info("Картинок с планировкой этажей и 3d моделей " + images.size());
         } catch (NullPointerException e) {
             log.error("Ошибка при обработке элементов: " + e.getMessage());
         }
@@ -183,12 +179,9 @@ public class HousePageParserTooba implements HousePageParser {
     }
 
     private LinkedList<ImageHouse> parseSituationalPlan(Document document) {
-        LinkedList<ImageHouse> imagesSituationalPlan = new LinkedList<>();
         String cssQuery = "h2.section-title:contains(Sytuacja) + div.rzut a";
         String attributeKey = "href";
         ImageType imageType = ImageType.SITUATIONALPLAN;
-        log.info("Парсим картинки расположения на участке");
-
         return parseStandardImages(document, cssQuery, attributeKey, imageType);
 
     }
@@ -197,7 +190,6 @@ public class HousePageParserTooba implements HousePageParser {
         String cssQuery = "h2.section-title:contains(Elewacje) + div.elewacje a";
         String attributeKey = "href";
         ImageType imageType = ImageType.FACADE;
-        log.info("Парсим фасады  на участке");
         return parseStandardImages(document, cssQuery, attributeKey, imageType);
 
     }
@@ -206,14 +198,12 @@ public class HousePageParserTooba implements HousePageParser {
         String cssQuery = "h2.section-title:contains(Przekrój) + div.rzut a";
         String attributeKey = "href";
         ImageType imageType = ImageType.SECTION;
-        log.info("Парсим разрезы на участке");
-
         return parseStandardImages(document, cssQuery, attributeKey, imageType);
     }
+
     private LinkedList<ImageHouse> parseStandardImages(Document document, String cssQuery,
                                                        String attributeKey, ImageType imageType) {
         LinkedList<ImageHouse> images = new LinkedList<>();
-        log.info("запускаем стандартный парсер картинок");
 
         try {
             Elements selectedElement = document.select(cssQuery);
@@ -229,6 +219,7 @@ public class HousePageParserTooba implements HousePageParser {
         }
         return images;
     }
+
     private LinkedList<SignatureLayout> parseSignatureRoomList(Document document) {
         LinkedList<SignatureLayout> signatureLayoutList = new LinkedList<>();
 
@@ -242,13 +233,13 @@ public class HousePageParserTooba implements HousePageParser {
                         parseRoomArea(roomAreaString), roomNumberString, roomAreaString);
                 signatureLayoutList.add(signatureLayout);
             }
-            log.info("Лист параметров комнат " + signatureLayoutList.size());
         } catch (NumberFormatException e) {
             log.error("Ошибка при парсинге параметров комнат: " + e.getMessage());
 
         }
         return signatureLayoutList;
     }
+
     private Double parseRoomArea(String roomAreaString) {
         Double roomArea;
         try {
@@ -260,6 +251,7 @@ public class HousePageParserTooba implements HousePageParser {
         }
         return roomArea;
     }
+
     private Integer parseRoomNumber(String roomNumberString) {
         Integer roomNumber;
         try {
@@ -271,6 +263,7 @@ public class HousePageParserTooba implements HousePageParser {
         }
         return roomNumber;
     }
+
     private ImageType generateImageType(String type) {
         ImageType imageType = ImageType.UNDEFINEDTYPE;
 
@@ -294,17 +287,12 @@ public class HousePageParserTooba implements HousePageParser {
         return imageType;
     }
 
-    private LinkedList<ImageHouse> addAndSave(LinkedList oldList, LinkedList savedList, Integer id, String title) {
-        if (!savedList.isEmpty()) {
-            oldList.addAll(imageDownload.saveImage(id, title, savedList));
-        }
-        return oldList;
-    }
     private String transliterate(String rusText) {
         Transliterator transliterator = Transliterator.getInstance("Russian-Latin/BGN");
         String engText = transliterator.transliterate(rusText);
         return StringUtils.stripAccents(engText);
     }
+
     private Double extractDoubleValue(String input) {
         try {
             String[] parts = input.split(" ");
@@ -315,6 +303,7 @@ public class HousePageParserTooba implements HousePageParser {
             return null;
         }
     }
+
     private Integer extractIntegerValue(String input) {
         try {
             String numericString = input.replaceAll("[^\\d]", "");
@@ -324,6 +313,7 @@ public class HousePageParserTooba implements HousePageParser {
             return null;
         }
     }
+
     private Boolean extractBooleanValue(String input) {
         boolean b;
         switch (input) {
@@ -339,6 +329,7 @@ public class HousePageParserTooba implements HousePageParser {
         }
         return b;
     }
+
     private Floors findFloors(String fullFloors, boolean hasMansard) {
         Floors floors;
         switch (fullFloors) {
@@ -357,6 +348,7 @@ public class HousePageParserTooba implements HousePageParser {
         }
         return floors;
     }
+
     private RoofType findRoofType(String input) {
         RoofType roofType;
         switch (input) {
@@ -377,6 +369,7 @@ public class HousePageParserTooba implements HousePageParser {
         }
         return roofType;
     }
+
     private Technology findTechnology(String input) {
         Technology technology;
         switch (input) {
@@ -394,6 +387,7 @@ public class HousePageParserTooba implements HousePageParser {
         }
         return technology;
     }
+
     private ArchitectureStyle findArchitectureStyle(String input) {
         ArchitectureStyle architectureStyle;
         switch (input) {
@@ -417,6 +411,7 @@ public class HousePageParserTooba implements HousePageParser {
         }
         return architectureStyle;
     }
+
     private Garage findGarage(String input) {
         Garage garage;
         switch (input) {

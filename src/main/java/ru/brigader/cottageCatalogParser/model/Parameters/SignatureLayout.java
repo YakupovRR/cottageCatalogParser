@@ -1,4 +1,4 @@
-package ru.brigader.cottageCatalogParser.model.houseParameters;
+package ru.brigader.cottageCatalogParser.model.Parameters;
 
 import lombok.*;
 

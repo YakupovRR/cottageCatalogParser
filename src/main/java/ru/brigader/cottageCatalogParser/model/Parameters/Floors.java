@@ -1,4 +1,4 @@
-package ru.brigader.cottageCatalogParser.model;
+package ru.brigader.cottageCatalogParser.model.Parameters;
 
 public enum Floors {
     ONE,

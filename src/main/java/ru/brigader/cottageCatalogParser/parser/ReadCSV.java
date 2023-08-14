@@ -22,7 +22,6 @@ public class ReadCSV {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        log.info("Размер листа  " + s.size());
         return s;
     }
 }
