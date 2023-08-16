@@ -6,9 +6,6 @@ import ru.brigader.cottageCatalogParser.model.House;
 
 @Component
 public interface HousePageParser {
-
-
     House parse(House house);
-
 
 }

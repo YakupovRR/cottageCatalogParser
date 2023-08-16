@@ -9,7 +9,7 @@ import ru.brigader.cottageCatalogParser.model.Parameters.ArchitectureStyle;
 import ru.brigader.cottageCatalogParser.model.Parameters.Garage;
 import ru.brigader.cottageCatalogParser.model.Parameters.RoofType;
 import ru.brigader.cottageCatalogParser.model.Parameters.Technology;
-import ru.brigader.cottageCatalogParser.parser.HousePageParserTooba;
+import ru.brigader.cottageCatalogParser.parser.Tooba.HousePageParserTooba;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;

@@ -49,5 +49,6 @@ public class House {
     List<ImageHouse> imageHouseList;
     List <ImageType> findedImageTypes;
     String dirSaveImages;
+    String descriptionOrg;
 
 }

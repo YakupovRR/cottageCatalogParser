@@ -4,22 +4,23 @@ import lombok.extern.slf4j.Slf4j;
 import ru.brigader.cottageCatalogParser.model.Parameters.ImageType;
 
 import java.io.File;
+import java.util.HashSet;
 
 @Slf4j
 public class CreateDir {
 
 
-    public String createAllDir(int id, String titleEng) {
+    public String createAllDir(int id, String titleEng, HashSet<ImageType> imageTypes) {
 
-        String dirFirstPart = "c:" + "/" + "Houses" + "/" + id + "_" + titleEng + "/";
-        File dirBase = new File(dirFirstPart);
+        String dirProject = "c:" + "/" + "Houses" + "/" + id + "_" + titleEng + "/";
+        File dirBase = new File(dirProject);
         createThisDir(dirBase);
-        for (ImageType i : ImageType.values()) {
-            String dirSecondPart = dirFirstPart + i.toString().toLowerCase();
+        for (ImageType i : imageTypes) {
+            String dirSecondPart = dirProject + i.toString().toLowerCase();
             File dirImage = new File(dirSecondPart);
             createThisDir(dirImage);
         }
-        return dirFirstPart;
+        return dirProject;
     }
 
     private void createThisDir(File dir) {

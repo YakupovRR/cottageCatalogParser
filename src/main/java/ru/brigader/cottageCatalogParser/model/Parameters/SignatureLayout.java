@@ -8,13 +8,9 @@ import lombok.*;
 @ToString
 public class SignatureLayout {
 
-    String titleOrg;
+    String nameOrg;
+    String name;
     Integer number;
     Double roomArea;
-    String numberString;
-    String roomAreaString;
-
-
-
 
 }
