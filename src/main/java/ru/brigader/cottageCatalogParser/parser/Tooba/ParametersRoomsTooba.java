@@ -6,7 +6,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import ru.brigader.cottageCatalogParser.exception.ParseException;
 import ru.brigader.cottageCatalogParser.model.House;
-import ru.brigader.cottageCatalogParser.model.Parameters.SignatureLayout;
+import ru.brigader.cottageCatalogParser.model.SignatureLayout;
 
 import java.util.LinkedList;
 
@@ -75,23 +75,8 @@ public class ParametersRoomsTooba {
                 log.info("Нет номера комнаты: Значение равно null");
                 return null;
             }
-
-            /*
-            if (roomNumberString.contains("/")) {
-                roomNumberString = roomNumberString.split("/")[1];
-            }
-            if (roomNumberString.contains(".")) {
-                roomNumberString = roomNumberString.split(".")[1];
-            }
-            if (roomNumberString.contains(",")) {
-                roomNumberString = roomNumberString.split(",")[1];
-            }
-            String cleanRoomNumberString = roomNumberString.substring(0, roomNumberString.length() - 1);
-          */
             String[] parts = roomNumberString.split("[/\\.]");
             String cleanRoomNumberString = parts[parts.length - 1];
-
-
             roomNumber = Integer.parseInt(cleanRoomNumberString);
         } catch (NumberFormatException | NullPointerException e) {
             log.error("Ошибка при парсинге номера комнаты: " + e.getMessage());

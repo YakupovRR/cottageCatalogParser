@@ -24,7 +24,6 @@ public class ImagesParserTooba {
     protected House parseImages(Document document, House house) {
 
         try {
-            // парсинг картинок
             LinkedList<ImageHouse> floorsAndModel3DImages = parseFloorsAndModel3DImages(document);
             LinkedList<ImageHouse> situationalPlanImages = parseSituationalPlan(document);
             LinkedList<ImageHouse> facadesImages = parseFacades(document);

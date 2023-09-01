@@ -3,9 +3,11 @@ package ru.brigader.cottageCatalogParser.parser;
 import org.springframework.stereotype.Component;
 import ru.brigader.cottageCatalogParser.model.House;
 
+import java.util.LinkedList;
+
 
 @Component
 public interface HousePageParser {
-    House parse(House house);
+    LinkedList<House> startParse();
 
 }

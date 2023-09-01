@@ -1,22 +1,29 @@
 package ru.brigader.cottageCatalogParser;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import ru.brigader.cottageCatalogParser.database.HouseRepository;
 import ru.brigader.cottageCatalogParser.model.House;
 import ru.brigader.cottageCatalogParser.parser.*;
 import ru.brigader.cottageCatalogParser.parser.Tooba.HousePageParserTooba;
+import java.util.List;
 
-import java.util.LinkedList;
 
+// TODO: 22.08.2023 Проверить как работает JSON если уже есть сохраненные проекты
+// TODO: 22.08.2023 Создание таблицы из программы
+// TODO: 22.08.2023 Разобраться с boolean в house 
 
 @SpringBootApplication
 @Slf4j
 public class CottageCatalogParserApplication {
 
     private static HouseLinkExtractor houseLinkExtractor;
-    private static ReadCSV readCSV;
     public static HousePageParser housePageParser = new HousePageParserTooba();
 
     @Autowired
@@ -27,29 +34,21 @@ public class CottageCatalogParserApplication {
     public static void main(String[] args) {
         SpringApplication.run(CottageCatalogParserApplication.class, args);
 
-        //сохранение ссылок на проекты
-        //houseLinkExtractor.saveLinksToFile();
+        try {
+            ConfigurableApplicationContext context = SpringApplication.run(CottageCatalogParserApplication.class, args);
 
-        LinkedList<String> urls = readCSV.readFromFile("url.csv");
-        LinkedList<String> titles = readCSV.readFromFile("title.csv");
-        int id = 1;
-        int fallenSaved = 0;
+            // Просто вывести сообщение об успешном подключении
+            System.out.println("Connected to the database.");
 
-        for (int i = 0; i < urls.size(); i++) {
-            House house = new House();
-            house.setId(id);
-            house.setTitle(titles.get(i));
-            house.setUrlSource(urls.get(i));
-            log.info(id + " Парсинг проекта " + house.getUrlSource());
-            house = housePageParser.parse(house);
-            if (house != null) {
-                log.info(house.toString());
-            //сохранние в БД
-                id++;
-            } else {
-                fallenSaved ++;
-            }
+            // Закрытие контекста Spring Boot
+            context.close();
+        } catch (Exception e) {
+            System.err.println("Failed to connect to the database: " + e.getMessage());
         }
-        log.info("Не удалось сохранить проектов: " + fallenSaved);
+
+
+        //сохранение ссылок на проекты
+       // houseLinkExtractor.saveLinksToFile();
+        //  housePageParser.startParse();
     }
 }

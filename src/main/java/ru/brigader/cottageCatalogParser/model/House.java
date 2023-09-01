@@ -4,15 +4,25 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import javax.persistence.*;
+
+import org.springframework.stereotype.Repository;
 import ru.brigader.cottageCatalogParser.model.Parameters.*;
 
+import javax.persistence.Transient;
 import java.util.List;
 
+@Repository
 @Getter
 @Setter
 @ToString
+@Entity
+@Table(name = "projects")
 public class House {
 
+    @Id
+    @Column(name = "idProject")
     int id;
     String title;
     String titleEng;
@@ -32,23 +42,26 @@ public class House {
     Integer rooms;
     Integer bathrooms;
     @Builder.Default
-    Boolean hasGarage;
+    boolean hasGarage;
     Garage garage;
     @Builder.Default
-    Boolean hasBasement;
+    boolean hasBasement;
     @Builder.Default
-    Boolean hasFireplace;
+    boolean hasFireplace;
     @Builder.Default
     boolean operatedRoof = false;
     @Builder.Default
     boolean operatedLoft = false; //эксплуатируемый чердак - как мансарда, но без комнат
     Double rating;
     Integer voted;
-    List<SignatureLayout> signatureLayoutList; // размеры помещений из таблицы около картинок
     String urlSource;
-    List<ImageHouse> imageHouseList;
-    List <ImageType> findedImageTypes;
-    String dirSaveImages;
     String descriptionOrg;
+    String dirSaveImages;
+    @Transient
+    List<SignatureLayout> signatureLayoutList; // размеры помещений из таблицы около картинок
+    @Transient
+    List<ImageHouse> imageHouseList;
+
+    //List <ImageType> foundedImageTypes;
 
 }

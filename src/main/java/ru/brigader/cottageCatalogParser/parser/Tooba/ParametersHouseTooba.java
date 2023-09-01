@@ -131,7 +131,7 @@ public class ParametersHouseTooba {
         try {
             String numericString = input.replaceAll("\\D", "");
             return Integer.parseInt(numericString);
-        } catch (NumberFormatException  | NullPointerException e) {
+        } catch (NumberFormatException | NullPointerException e) {
             log.error("Не удалось извлечь значение из строки " + input);
             return null;
         }
@@ -179,22 +179,24 @@ public class ParametersHouseTooba {
     }
 
     private RoofType findRoofType(String input) {
-        RoofType roofType;
-        switch (input) {
-            case "dwuspadowy":
-                roofType = RoofType.TWOSLOPES;
-                break;
-            case "kopertowy":
-                roofType = RoofType.FOURSLOPES;
-                break;
-            case "wielospadowy":
-                roofType = RoofType.COMPLICATED;
-                break;
-            case "płaski":
-                roofType = RoofType.FLAT;
-                break;
-            default:
-                roofType = RoofType.UNDEFINEDROOFTYPE;
+        RoofType roofType = RoofType.UNDEFINEDROOFTYPE;
+        if (input != null) {
+            switch (input) {
+                case "dwuspadowy":
+                    roofType = RoofType.TWOSLOPES;
+                    break;
+                case "kopertowy":
+                    roofType = RoofType.FOURSLOPES;
+                    break;
+                case "wielospadowy":
+                    roofType = RoofType.COMPLICATED;
+                    break;
+                case "płaski":
+                    roofType = RoofType.FLAT;
+                    break;
+                default:
+                    roofType = RoofType.UNDEFINEDROOFTYPE;
+            }
         }
         return roofType;
     }

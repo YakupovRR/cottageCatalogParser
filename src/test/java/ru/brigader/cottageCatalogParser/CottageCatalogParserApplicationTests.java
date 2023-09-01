@@ -138,9 +138,9 @@ class CottageCatalogParserApplicationTests {
 
     @Test
     void parseHasGarage() {
-        Boolean expected = false;
-        Boolean notExpected = true;
-        Boolean checkedValue  = house.getHasGarage();
+        boolean expected = false;
+        boolean notExpected = true;
+        boolean checkedValue  = house.isHasFireplace();
         assertEquals(expected, checkedValue);
         assertNotEquals(notExpected, checkedValue);
     }
@@ -156,9 +156,9 @@ class CottageCatalogParserApplicationTests {
 
     @Test
     void parseHasFireplace() {
-        Boolean expected = true;
-        Boolean notExpected = false;
-        Boolean checkedValue  = house.getHasFireplace();
+        boolean expected = true;
+        boolean notExpected = false;
+         boolean checkedValue  = house.isHasFireplace();
         assertEquals(expected, checkedValue);
         assertNotEquals(notExpected, checkedValue);
     }
