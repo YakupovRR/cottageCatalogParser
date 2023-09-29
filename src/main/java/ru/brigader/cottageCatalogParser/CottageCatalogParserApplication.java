@@ -34,21 +34,11 @@ public class CottageCatalogParserApplication {
     public static void main(String[] args) {
         SpringApplication.run(CottageCatalogParserApplication.class, args);
 
-        try {
-            ConfigurableApplicationContext context = SpringApplication.run(CottageCatalogParserApplication.class, args);
 
-            // Просто вывести сообщение об успешном подключении
-            System.out.println("Connected to the database.");
-
-            // Закрытие контекста Spring Boot
-            context.close();
-        } catch (Exception e) {
-            System.err.println("Failed to connect to the database: " + e.getMessage());
-        }
 
 
         //сохранение ссылок на проекты
        // houseLinkExtractor.saveLinksToFile();
-        //  housePageParser.startParse();
+       housePageParser.startParse();
     }
 }

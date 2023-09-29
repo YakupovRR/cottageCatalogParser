@@ -1,12 +1,11 @@
 package ru.brigader.cottageCatalogParser.parser.Tooba;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.HttpStatusException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import ru.brigader.cottageCatalogParser.exception.ParseException;
 import ru.brigader.cottageCatalogParser.model.House;
-import ru.brigader.cottageCatalogParser.model.Parameters.*;
+import ru.brigader.cottageCatalogParser.model.Parameters.Enums.*;
 
 @Slf4j
 public class ParametersHouseTooba {
@@ -17,7 +16,7 @@ public class ParametersHouseTooba {
 
             //жилая площадь
             String cssQueryLivingArea = "span.label:contains(Pow. użytkowa) + span.val";
-            house.setLivingArea(extractDoubleValue(parseParameterString(document, cssQueryLivingArea)));
+            house.getDimensions().setLivingArea(extractDoubleValue(parseParameterString(document, cssQueryLivingArea)));
 
             //этажность
             String cssQueryFullFloors = "span.label:contains(Kondygnacje) + span.val";
@@ -25,34 +24,34 @@ public class ParametersHouseTooba {
             String fullFloors = parseParameterString(document, cssQueryFullFloors);
             String hasMansardString = parseParameterString(document, cssQueryHasMansard);
             Boolean hasMansard = extractBooleanValue(hasMansardString);
-            house.setFloors(findFloors(fullFloors, hasMansard));
+            house.getDimensions().setFloors(findFloors(fullFloors, hasMansard));
 
             //высота
             String cssQueryHeight = "span.label:contains(Wysokość domu) + span.val";
-            house.setHeight(extractDoubleValue(parseParameterString(document, cssQueryHeight)));
+            house.getDimensions().setHeight(extractDoubleValue(parseParameterString(document, cssQueryHeight)));
 
             //ширина
             String cssQueryWidth = "span.label:contains(Szerokość domu) + span.val";
-            house.setWidth(extractDoubleValue(parseParameterString(document, cssQueryWidth)));
+            house.getDimensions().setWidth(extractDoubleValue(parseParameterString(document, cssQueryWidth)));
 
             //глубина
             String cssQueryDepth = "span.label:contains(Długość domu) + span.val";
-            house.setDepth(extractDoubleValue(parseParameterString(document, cssQueryDepth)));
+            house.getDimensions().setDepth(extractDoubleValue(parseParameterString(document, cssQueryDepth)));
 
             //тип крыши
             String cssQueryRoofType = "span.label:contains(Rodzaj dachu) + span.val";
             String roofTypeOrg = parseParameterString(document, cssQueryRoofType);
             RoofType roofType = findRoofType(roofTypeOrg);
-            house.setRoofType(roofType);
-            if (roofType == RoofType.UNDEFINEDROOFTYPE) house.setRoofTypeOrg(roofTypeOrg);
+            house.getRoof().setRoofType(roofType);
+            if (roofType == RoofType.UNDEFINEDROOFTYPE) house.getRoof().setRoofTypeOrg(roofTypeOrg);
 
             //угол наклона крыши
             String cssQueryRoofAngle = "span.label:contains(Nachylenie dachu) + span.val";
-            house.setRoofAngle(extractIntegerValue(parseParameterString(document, cssQueryRoofAngle)));
+            house.getRoof().setRoofAngle(extractIntegerValue(parseParameterString(document, cssQueryRoofAngle)));
 
             // площадь крыши
             String cssQueryRoofArea = "span.label:contains(Powierzchnia dachu) + span.val";
-            house.setRoofArea(extractDoubleValue(parseParameterString(document, cssQueryRoofArea)));
+            house.getRoof().setRoofArea(extractDoubleValue(parseParameterString(document, cssQueryRoofArea)));
 
             //технология (материал) строительства
             String cssTechnology = "span.label:contains(Technologia) + span.val";
@@ -60,8 +59,8 @@ public class ParametersHouseTooba {
             if (elementTechnology != null) {
                 String technologyOrg = elementTechnology.text();
                 Technology technology = findTechnology(technologyOrg);
-                house.setTechnology(technology);
-                if (technology == Technology.UNDEFINEDTECHNOLOGY) house.setTechnologyOrg(technologyOrg);
+                house.getArchitecture().setTechnology(technology);
+                if (technology == Technology.UNDEFINEDTECHNOLOGY) house.getArchitecture().setTechnologyOrg(technologyOrg);
             }
             //стиль дома
             String cssQueryArchitectureStyle = "span.label:contains(Styl) + span.val";
@@ -69,43 +68,43 @@ public class ParametersHouseTooba {
             if (elementArchitectureStyle != null) {
                 String styleOrg = elementArchitectureStyle.text();
                 ArchitectureStyle architectureStyle = findArchitectureStyle(styleOrg);
-                house.setArchitectureStyle(architectureStyle);
-                if (architectureStyle == ArchitectureStyle.UNDEFINEDSTYLE) house.setArchitectureStyleOrg(styleOrg);
+                house.getArchitecture().setArchitectureStyle(architectureStyle);
+                if (architectureStyle == ArchitectureStyle.UNDEFINEDSTYLE) house.getArchitecture().setArchitectureStyleOrg(styleOrg);
             }
 
             // количество комнат
             String cssQueryRoomsNumber = "span.label:contains(Liczba pokoi) + span.val";
-            house.setRooms(extractIntegerValue(parseParameterString(document, cssQueryRoomsNumber)));
+            house.getArchitecture().setRooms(extractIntegerValue(parseParameterString(document, cssQueryRoomsNumber)));
 
             // количество ванных комнат
             String cssQueryBathroomsNumber = "span.label:contains(Liczba łazienek) + span.val";
-            house.setBathrooms(extractIntegerValue(parseParameterString(document, cssQueryBathroomsNumber)));
+            house.getArchitecture().setBathrooms(extractIntegerValue(parseParameterString(document, cssQueryBathroomsNumber)));
 
             // камин
             String cssQueryFireplace = "span.label:contains(Kominek) + span.val";
-            house.setHasFireplace(extractBooleanValue(parseParameterString(document, cssQueryFireplace)));
+            house.getOptions().setHasFireplace(extractBooleanValue(parseParameterString(document, cssQueryFireplace)));
 
             // гараж
             String cssQueryGarage = "span.label:contains(Garaż) + span.val";
             Garage garage = findGarage(parseParameterString(document, cssQueryGarage));
-            if (garage == Garage.NON || garage == Garage.UNDEFINEDGARAGE) house.setHasGarage(false);
-            house.setGarage(garage);
+            if (garage == Garage.NON || garage == Garage.UNDEFINEDGARAGE) house.getOptions().setHasGarage(false);
+            house.getOptions().setGarage(garage);
 
             // подвал
             String cssQueryBasement = "span.label:contains(Piwnica) + span.val";
-            house.setHasBasement(extractBooleanValue(parseParameterString(document, cssQueryBasement)));
+            house.getOptions().setHasBasement(extractBooleanValue(parseParameterString(document, cssQueryBasement)));
 
             //эксплуатируемый чердак
             String cssQueryLoft = "span.label:contains(Poddasze do adaptacji) + span.val";
-            house.setOperatedLoft(extractBooleanValue(parseParameterString(document, cssQueryLoft)));
+            house.getOptions().setOperatedLoft(extractBooleanValue(parseParameterString(document, cssQueryLoft)));
 
             // рейтинг
             String cssQueryRating = ".ocena-value.average";
-            house.setRating(extractDoubleValue(parseParameterString(document, cssQueryRating)));
+            house.getProjectRating().setRating(extractDoubleValue(parseParameterString(document, cssQueryRating)));
 
             //проголосовавшие в рейтинге
             String cssQueryVoted = ".ocena-value.average";
-            house.setVoted(extractIntegerValue(parseParameterString(document, cssQueryVoted)));
+            house.getProjectRating().setVoted(extractIntegerValue(parseParameterString(document, cssQueryVoted)));
 
             //описание дома
             house.setDescriptionOrg(extractDescriptionFromPage(document));

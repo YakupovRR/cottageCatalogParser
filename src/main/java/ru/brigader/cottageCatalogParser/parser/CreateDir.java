@@ -1,7 +1,7 @@
 package ru.brigader.cottageCatalogParser.parser;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.brigader.cottageCatalogParser.model.Parameters.ImageType;
+import ru.brigader.cottageCatalogParser.model.Parameters.Enums.ImageType;
 
 import java.io.File;
 import java.util.HashSet;

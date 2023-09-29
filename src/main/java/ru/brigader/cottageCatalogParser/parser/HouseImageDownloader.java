@@ -3,7 +3,7 @@ package ru.brigader.cottageCatalogParser.parser;
 import lombok.extern.slf4j.Slf4j;
 import ru.brigader.cottageCatalogParser.model.House;
 import ru.brigader.cottageCatalogParser.model.ImageHouse;
-import ru.brigader.cottageCatalogParser.model.Parameters.ImageType;
+import ru.brigader.cottageCatalogParser.model.Parameters.Enums.ImageType;
 
 import java.io.IOException;
 import java.io.InputStream;

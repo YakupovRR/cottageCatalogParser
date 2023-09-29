@@ -1,14 +1,13 @@
 package ru.brigader.cottageCatalogParser.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.brigader.cottageCatalogParser.model.Parameters.*;
+import ru.brigader.cottageCatalogParser.model.Parameters.Enums.*;
 
 import javax.persistence.Transient;
 import java.util.List;
@@ -21,47 +20,33 @@ import java.util.List;
 @Table(name = "projects")
 public class House {
 
+    @Autowired
+    public House() {
+        this.dimensions = new Dimensions();
+        this.roof = new Roof();
+        this.options = new Options();
+        this.projectRating = new ProjectRating();
+        this.architecture = new Architecture();
+    }
+
     @Id
     @Column(name = "idProject")
     int id;
     String title;
     String titleEng;
-    Double livingArea;
-    Double width;
-    Double depth;
-    Double height;
-    Integer roofAngle;
-    RoofType roofType;
-    String roofTypeOrg;
-    Double roofArea;
-    Floors floors;
-    ArchitectureStyle architectureStyle;
-    String ArchitectureStyleOrg;
-    Technology technology;
-    String technologyOrg;
-    Integer rooms;
-    Integer bathrooms;
-    @Builder.Default
-    boolean hasGarage;
-    Garage garage;
-    @Builder.Default
-    boolean hasBasement;
-    @Builder.Default
-    boolean hasFireplace;
-    @Builder.Default
-    boolean operatedRoof = false;
-    @Builder.Default
-    boolean operatedLoft = false; //эксплуатируемый чердак - как мансарда, но без комнат
-    Double rating;
-    Integer voted;
     String urlSource;
     String descriptionOrg;
     String dirSaveImages;
+
+    Dimensions dimensions;
+    Roof roof;
+    Options options;
+    ProjectRating projectRating;
+    Architecture architecture;
+
     @Transient
     List<SignatureLayout> signatureLayoutList; // размеры помещений из таблицы около картинок
     @Transient
     List<ImageHouse> imageHouseList;
-
-    //List <ImageType> foundedImageTypes;
 
 }

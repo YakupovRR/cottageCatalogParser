@@ -9,7 +9,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import com.ibm.icu.text.Transliterator;
 import org.apache.commons.lang3.StringUtils;
-import ru.brigader.cottageCatalogParser.model.Parameters.*;
+import ru.brigader.cottageCatalogParser.model.Parameters.Enums.Floors;
 import ru.brigader.cottageCatalogParser.parser.HousePageParser;
 import ru.brigader.cottageCatalogParser.dataIO.CsvIO;
 
@@ -96,7 +96,9 @@ public class HousePageParserTooba implements HousePageParser {
 
     private boolean checkingRequiredParameters(House house) {
         boolean checkPassed = true;
-        if (house.getWidth() == null || house.getDepth() == null || house.getFloors().equals(Floors.UNDEFINEDFLOOR))
+        if (house.getDimensions().getWidth() == null ||
+                house.getDimensions().getDepth() == null ||
+                house.getDimensions().getFloors().equals(Floors.UNDEFINEDFLOOR))
             checkPassed = false;
         return checkPassed;
     }

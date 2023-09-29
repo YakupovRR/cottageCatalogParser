@@ -7,7 +7,7 @@ import org.jsoup.select.Elements;
 import ru.brigader.cottageCatalogParser.exception.ParseException;
 import ru.brigader.cottageCatalogParser.model.House;
 import ru.brigader.cottageCatalogParser.model.ImageHouse;
-import ru.brigader.cottageCatalogParser.model.Parameters.ImageType;
+import ru.brigader.cottageCatalogParser.model.Parameters.Enums.ImageType;
 import ru.brigader.cottageCatalogParser.parser.CreateDir;
 import ru.brigader.cottageCatalogParser.parser.HouseImageDownloader;
 
