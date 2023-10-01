@@ -2,162 +2,154 @@ package ru.brigader.cottageCatalogParser.database;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.brigader.cottageCatalogParser.model.House;
+import ru.brigader.cottageCatalogParser.model.ImageHouse;
+import ru.brigader.cottageCatalogParser.model.SignatureLayout;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import java.sql.*;
 import java.util.LinkedList;
-import java.util.List;
 
 
 @Slf4j
 public class HouseDb {
 
     private DataSource dataSource;
+    private final String sqlHouse = "INSERT INTO projects (idProject, title, titleEng, livingArea, width, " + //по 5 шт в строке
+            "depth, height, floors, roofAngle, roofType, " +
+            "roofTypeOrg, roofArea, architectureStyle, ArchitectureStyleOrg, technology, " +
+            "technologyOrg, rooms, bathrooms, hasGarage, garage, " +
+            "hasBasement, hasFireplace, operatedRoof, operatedLoft, rating, " +
+            "voted, urlSource, descriptionOrg, dirSaveImages )" +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, " +   // по 10 шт в строке
+            "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, " +
+            "?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    private final String sqlImages = "INSERT INTO images (idProject, path, imageType, imageTag, imageTypeOrg," +
+            " urlSource) VALUES (?, ?, ?, ?, ?, ?)";
+    private final String sqlSignatureLayout = "INSERT INTO signatureLayout (idProject, name, nameOrg, number, roomArea) " +
+            "VALUES (?, ?, ?, ?, ?)";
+
 
     public void saveProjectDb(LinkedList<House> houses) throws SQLException {
-
-
-        //здесь обозначить SQL запросы
-
-
-        String sqlHouse = "INSERT INTO projects (idProject, title,titleEng,livingArea, width, depth, height," +
-                " roofAngle, roofType, idRoofTypeOrg, roofArea, floors, architectureStyle, idArchitectureStyleOrg, " +
-                "idArchitectureStyleOrg, idTechnologyOrg, rooms, bathrooms, hasGarage, garage," +
-                "hasBasement, hasFireplace, operatedRoof, operatedLoft, rating, voted," +
-                "urlSource, description, descriptionOrg, dirSaveImages) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?," +
-                " ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        String sqlOriginalDesignation = "INSERT INTO originalDesignation (orgDesignation, ruDesignation) VALUES (?, ?)";
-
-        String sqlImages = "INSERT INTO images (idProject, path, imageType, imageTag, idImageTypeOrg," +
-                " urlSource) VALUES (?, ?, ?, ?, ?, ?)";
-
-
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statementHouse = connection.prepareStatement(sqlHouse);
-             PreparedStatement statementOriginalDesignation = connection.prepareStatement(sqlOriginalDesignation);
-             PreparedStatement statementImages = connection.prepareStatement(sqlImages);
-
-        ) {
-
-            for (House house : houses) {
-                statementHouse.setInt(1, house.getId());
-                statementHouse.setString(2, house.getTitle());
-                statementHouse.setString(3, house.getTitleEng());
-                statementHouse.setDouble(4, house.getDimensions().getLivingArea());
-                statementHouse.setDouble(5, house.getDimensions().getWidth());
-                statementHouse.setDouble(6, house.getDimensions().getDepth());
-                statementHouse.setDouble(7, house.getDimensions().getHeight());
-
-
-            }
-
-
-            //Запись в БД самого проекта
-            statementHouse.setInt(1, house.getId());
-            statementHouse.setString(2, house.getTitle());
-            statementHouse.setString(3, house.getTitleEng());
-            statementHouse.setString(4, house.getDescription());
-            statementHouse.setDouble(5, house.getSquare());
-            statementHouse.setInt(6, house.getRooms());
-            statementHouse.setDouble(7, house.getWidth());
-            statementHouse.setDouble(8, house.getLength());
-            statementHouse.setString(9, String.valueOf(house.getFloors()));
-            statementHouse.setString(10, String.valueOf(house.getFeatures()));
-            statementHouse.executeUpdate();
-
-            // Запись в БД экстерьеров
-            try {
-                boolean isBaseExterior = true;   // предполагается, что основная картинка идет первой
-                for (int i = 0; i < house.getExteriorPath().size(); i++) {
-                    statementExterioir.setInt(1, house.getId());
-                    statementExterioir.setString(2, house.getExteriorPath().get(i));
-                    statementExterioir.setBoolean(3, isBaseExterior);
-                    statementExterioir.executeUpdate();
-                    isBaseExterior = false;
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+            try (PreparedStatement statementHouse = connection.prepareStatement(sqlHouse);
+                 PreparedStatement statementImages = connection.prepareStatement(sqlImages);
+                 PreparedStatement statementSignatureLayout = connection.prepareStatement(sqlSignatureLayout);
+            ) {
+                for (House house : houses) {
+                    log.info("Сохраняем в БД проект id " + house.getId());
+                    saveMainParametersHouseDb(house, statementHouse);
+                    saveImagesDb(house, statementImages);
+                    saveSignatureLayoutDb(house, statementSignatureLayout);
                 }
-            } catch (NullPointerException e) {
-                log.warn("Проект id " + house.getId() + " Не удалось записать лист экстерьеров в БД, возможно он null");
             }
-
-
-            // Запись в БД планировок
-            try {
-                int additionalImages = 0;
-                if (house.isGroundFloor()) additionalImages = additionalImages++;
-//эксплуатируемая кровля не учитывается, т.к. обычно сохранена криво на сайте-источнике
-                if (isCorrectLengthListLayout(house, additionalImages)) {
-                    for (int i = 0; i < (house.getLayoutPath().size() - additionalImages); i++) {
-                        statementLayout.setInt(1, house.getId());
-                        statementLayout.setString(2, house.getLayoutPath().get(i));
-                        statementLayout.setString(3, getFloorByNumber(i, house.getFloors()));
-                        statementLayout.executeUpdate();
-                    }
-                    //здесь может быть ошибка - эксплуатирумая кровля сохранится как подвал. Править потом вручную
-                    if (house.isGroundFloor()) {
-                        statementLayout.setInt(1, house.getId());
-                        statementLayout.setString(2, house.getLayoutPath().get(
-                                (house.getLayoutPath().size() - 1)));
-                        statementLayout.setString(3, String.valueOf(Floors.BASEMENT));
-                        statementLayout.executeUpdate();
-                    }
-                } else {
-                    for (int i = 0; i < house.getLayoutPath().size(); i++) {
-                        statementLayout.setInt(1, house.getId());
-                        statementLayout.setString(2, house.getLayoutPath().get(i));
-                        statementLayout.setString(3, "unknown");  //потом править только ручками
-                        statementLayout.executeUpdate();
-                    }
-                }
-            } catch (NullPointerException e) {
-                log.warn("Проект id " + house.getId() + " - не удалось записать лист этажей в БД, возможно он null");
-            }
-
-            // запись в БД тэгов
-            List<Integer> tagsId = new ArrayList<>();
-            try {
-                for (String i : house.getTags()) {
-                    statementTags.setString(1, i);
-                    ResultSet rs = statementTags.executeQuery();
-                    if (rs.next()) {
-                        int tagId = rs.getInt("tagid");
-                        tagsId.add(tagId);
-                    } else {
-                        rs = statementTags.getGeneratedKeys();
-                        if (rs.next()) {
-                            int tagId = rs.getInt(1);
-                            tagsId.add(tagId);
-                        } else {
-                            log.warn("Ошибка при поиске/сохранения тэга в БД проекта id " + house.getId());
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-
-// запись в БД пары проект/тэг
-            try {
-                for (int j : tagsId) {
-                    statementProjectAndTag.clearParameters(); // очищаем параметры запроса перед повторным использованием
-                    statementProjectAndTag.setInt(1, house.getId());
-                    statementProjectAndTag.setInt(2, j);
-                    statementProjectAndTag.executeUpdate();
-                }
-            } catch (NullPointerException e) {
-                log.warn("Проект id " + house.getId() + " Не удалось записать связующий лист проект/тэги");
-            }
+            connection.commit();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            if (connection != null) {
+                connection.rollback(); // Откатываем транзакцию в случае ошибки
+            }
+            throw e;
+        } finally {
+            if (connection != null) {
+                connection.setAutoCommit(true); // Включаем автоматический commit обратно
+                connection.close(); // Закрываем соединение
+            }
         }
     }
 
+    private void saveSignatureLayoutDb(House house, PreparedStatement statementSignatureLayout) throws SQLException {
 
-    //получение последнего id проекта, сохраненного в таблице
-    public Integer getLastProjectId() throws SQLException {
+        for (SignatureLayout signatureLayout : house.getSignatureLayoutList()) {
+
+            setParameter(statementSignatureLayout, 1, house.getId(), "int");
+            setParameter(statementSignatureLayout, 2, signatureLayout.getName(), "string");
+            setParameter(statementSignatureLayout, 3, signatureLayout.getNameOrg(), "string");
+            setParameter(statementSignatureLayout, 4, signatureLayout.getNumber(), "int");
+            setParameter(statementSignatureLayout, 5, signatureLayout.getRoomArea(), "double");
+            statementSignatureLayout.executeUpdate();
+        }
+    }
+
+    private void saveImagesDb(House house, PreparedStatement statementImages) throws SQLException {
+        for (ImageHouse imageHouse : house.getImageHouseList()) {
+            setParameter(statementImages, 1, house.getId(), "int");
+            setParameter(statementImages, 2, imageHouse.getPath(), "string");
+            setParameter(statementImages, 3, String.valueOf(imageHouse.getImageType()), "string");
+            setParameter(statementImages, 4, String.valueOf(imageHouse.getImageTag()), "string");
+            setParameter(statementImages, 5, imageHouse.getImageTypeOrg(), "string");
+            setParameter(statementImages, 6, imageHouse.getUrlSource(), "string");
+            statementImages.executeUpdate();
+        }
+    }
+
+    private void saveMainParametersHouseDb(House house, PreparedStatement statementHouse) throws SQLException {
+
+        setParameter(statementHouse, 1, house.getId(), "int");
+        setParameter(statementHouse, 2, house.getTitle(), "string");
+        setParameter(statementHouse, 3, house.getTitleEng(), "string");
+        setParameter(statementHouse, 4, house.getDimensions().getLivingArea(), "double");
+        setParameter(statementHouse, 5, house.getDimensions().getWidth(), "double");
+        setParameter(statementHouse, 6, house.getDimensions().getDepth(), "double");
+        setParameter(statementHouse, 7, house.getDimensions().getHeight(), "double");
+        setParameter(statementHouse, 8, String.valueOf(house.getDimensions().getFloors()), "string");
+        setParameter(statementHouse, 9, house.getRoof().getRoofAngle(), "int");
+        setParameter(statementHouse, 10, String.valueOf(house.getRoof().getRoofType()), "string");
+        setParameter(statementHouse, 11, house.getRoof().getRoofTypeOrg(), "string");
+        setParameter(statementHouse, 12, house.getRoof().getRoofArea(), "double");
+        setParameter(statementHouse, 13, String.valueOf(house.getArchitecture()
+                .getArchitectureStyle()), "string");
+        setParameter(statementHouse, 14, house.getArchitecture().getArchitectureStyleOrg(), "string");
+        setParameter(statementHouse, 15, String.valueOf(house.getArchitecture().getTechnology()),
+                "string");
+        setParameter(statementHouse, 16, house.getArchitecture().getTechnologyOrg(), "string");
+        setParameter(statementHouse, 17, house.getArchitecture().getRooms(), "int");
+        setParameter(statementHouse, 18, house.getArchitecture().getBathrooms(), "int");
+        statementHouse.setBoolean(19, house.getOptions().isHasGarage());
+        setParameter(statementHouse, 20, String.valueOf(house.getOptions().getGarage()), "string");
+        statementHouse.setBoolean(21, house.getOptions().isHasBasement());
+        statementHouse.setBoolean(22, house.getOptions().isHasFireplace());
+        statementHouse.setBoolean(23, house.getOptions().isOperatedRoof());
+        statementHouse.setBoolean(24, house.getOptions().isOperatedLoft());
+        setParameter(statementHouse, 25, house.getProjectRating().getRating(), "double");
+        setParameter(statementHouse, 26, house.getProjectRating().getVoted(), "int");
+        setParameter(statementHouse, 27, house.getUrlSource(), "string");
+        setParameter(statementHouse, 28, house.getDescriptionOrg(), "string");
+        setParameter(statementHouse, 29, house.getDirSaveImages(), "string");
+        statementHouse.executeUpdate();
+    }
+
+    private static void setParameter(PreparedStatement preparedStatement, int parameterIndex,
+                                     Object value, String type) throws SQLException {
+        switch (type.toLowerCase()) {
+            case "int":
+                if (value instanceof Integer) {
+                    preparedStatement.setInt(parameterIndex, (Integer) value);
+                } else {
+                    preparedStatement.setNull(parameterIndex, Types.INTEGER);
+                }
+                break;
+            case "double":
+                if (value instanceof Double) {
+                    preparedStatement.setDouble(parameterIndex, (Double) value);
+                } else {
+                    preparedStatement.setNull(parameterIndex, Types.DOUBLE);
+                }
+                break;
+            case "string":
+                if (value instanceof String) {
+                    preparedStatement.setString(parameterIndex, (String) value);
+                } else {
+                    preparedStatement.setNull(parameterIndex, Types.VARCHAR);
+                }
+                break;
+            default:
+                preparedStatement.setObject(parameterIndex, value);
+        }
+    }
+
+    public Integer getLastProjectId() {
         Integer lastProjectId = 0;
         String sqlRequestId = "SELECT MAX(idProject) FROM projects";
 
@@ -172,60 +164,6 @@ public class HouseDb {
         }
         return lastProjectId;
     }
-
-
-    private boolean isCorrectLengthListLayout(House house, int additionalImages) { // что у двухэтажного дома будет 2 картинки и т.п.
-
-        int expectedListLength = -1;
-
-        try {
-            switch (house.getFloors()) {
-                case ONE:
-                    expectedListLength = (1 + additionalImages);
-                    break;
-                case TWO:
-                    expectedListLength = (2 + additionalImages);
-                    break;
-                case ONEPLUSMANSARD:
-                    expectedListLength = (2 + additionalImages);
-                    break;
-                case THERE:
-                    expectedListLength = (3 + additionalImages);
-                    break;
-                case TWOPLUSMANSARD:
-                    expectedListLength = (3 + additionalImages);
-                    break;
-            }
-        } catch (NullPointerException e) {
-            log.warn("Не удалось определить ожидаемый размер листа");
-        }
-        return (expectedListLength == house.getLayoutPath().size());
-    }
-
-    private String getFloorByNumber(int i, Floors floor) {
-        String floorString = null;
-        switch (i) {
-            case 0:
-                floorString = String.valueOf(Floors.ONE);
-                break;
-            case 1:
-                if (floor.equals(Floors.ONEPLUSMANSARD)) {
-                    floorString = String.valueOf(Floors.ONEPLUSMANSARD);
-                } else {
-                    floorString = String.valueOf(Floors.TWO);
-                }
-                break;
-            case 2:
-                if (floor.equals(Floors.TWOPLUSMANSARD)) {
-                    floorString = String.valueOf(Floors.TWOPLUSMANSARD);
-                } else {
-                    floorString = String.valueOf(Floors.THERE);
-                }
-                break;
-        }
-        return floorString;
-    }  // получение название этажа по порядковому номеру картинки
-
 
 }
 

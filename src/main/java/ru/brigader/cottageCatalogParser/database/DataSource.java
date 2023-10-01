@@ -11,7 +11,7 @@ public class DataSource {
     private static HikariDataSource ds;
 
     static {
-        config.setJdbcUrl( "jdbc:postgresql://localhost:5432/cottages" );
+        config.setJdbcUrl( "jdbc:postgresql://localhost:5432/houses" );
         config.setUsername( "constructor" );
         config.setPassword( "admin" );
         config.addDataSourceProperty( "cachePrepStmts" , "true" );

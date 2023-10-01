@@ -152,6 +152,14 @@ public class ImagesParserTooba {
                 imageHouse.setImageType(ImageType.LAYOUT);
                 imageHouse.setImageTag(ImageType.TAGFLOOR);
                 allFoundImageTypes.add(ImageType.LAYOUT);
+            } else if (type.contains("Rzut parteru - wymiary szczegółowe")) {
+                imageHouse.setImageType(ImageType.LAYOUT);
+                imageHouse.setImageTag(ImageType.TAGFLOOR);
+                allFoundImageTypes.add(ImageType.LAYOUT);
+            } else if (type.contains("Rzut piętra")) {
+                imageHouse.setImageType(ImageType.LAYOUT);
+                imageHouse.setImageTag(ImageType.TAGFLOOR);
+                allFoundImageTypes.add(ImageType.LAYOUT);
             } else if (type.contains("Rzut poddasza")) {
                 imageHouse.setImageType(ImageType.LAYOUT);
                 imageHouse.setImageTag(ImageType.TAGMANSARD);

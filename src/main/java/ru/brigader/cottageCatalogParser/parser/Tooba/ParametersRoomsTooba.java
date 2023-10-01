@@ -186,6 +186,7 @@ public class ParametersRoomsTooba {
                 title = "Тамбур + гардероб";
                 break;
             case "pralnia":
+            case "Pom. gospodarcze - pralnia":
                 title = "Прачечная";
                 break;
             case "strych":
@@ -206,6 +207,7 @@ public class ParametersRoomsTooba {
                 title = "Котельная - кладовая";
                 break;
             case "kotłownia + pralnia":
+            case "Kotłownia+pralnia":
                 title = "Котельная - прачечная";
                 break;
             case "powierzchnia":
@@ -214,7 +216,10 @@ public class ParametersRoomsTooba {
             case "antresola":
                 title = "Антресоль";
                 break;
-
+            case "Pom. gospodarcze - garderoba":
+            case "Aneks do pracy + garderoba":
+                title = "Подсобное помещение - гардероб";
+                break;
         }
         return title;
     }

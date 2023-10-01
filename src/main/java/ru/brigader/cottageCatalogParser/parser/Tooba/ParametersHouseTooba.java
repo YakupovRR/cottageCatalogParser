@@ -60,7 +60,8 @@ public class ParametersHouseTooba {
                 String technologyOrg = elementTechnology.text();
                 Technology technology = findTechnology(technologyOrg);
                 house.getArchitecture().setTechnology(technology);
-                if (technology == Technology.UNDEFINEDTECHNOLOGY) house.getArchitecture().setTechnologyOrg(technologyOrg);
+                if (technology == Technology.UNDEFINEDTECHNOLOGY)
+                    house.getArchitecture().setTechnologyOrg(technologyOrg);
             }
             //стиль дома
             String cssQueryArchitectureStyle = "span.label:contains(Styl) + span.val";
@@ -69,7 +70,8 @@ public class ParametersHouseTooba {
                 String styleOrg = elementArchitectureStyle.text();
                 ArchitectureStyle architectureStyle = findArchitectureStyle(styleOrg);
                 house.getArchitecture().setArchitectureStyle(architectureStyle);
-                if (architectureStyle == ArchitectureStyle.UNDEFINEDSTYLE) house.getArchitecture().setArchitectureStyleOrg(styleOrg);
+                if (architectureStyle == ArchitectureStyle.UNDEFINEDSTYLE)
+                    house.getArchitecture().setArchitectureStyleOrg(styleOrg);
             }
 
             // количество комнат
@@ -87,7 +89,7 @@ public class ParametersHouseTooba {
             // гараж
             String cssQueryGarage = "span.label:contains(Garaż) + span.val";
             Garage garage = findGarage(parseParameterString(document, cssQueryGarage));
-            if (garage == Garage.NON || garage == Garage.UNDEFINEDGARAGE) house.getOptions().setHasGarage(false);
+            if (garage != Garage.NON || garage != Garage.UNDEFINEDGARAGE) house.getOptions().setHasGarage(true);
             house.getOptions().setGarage(garage);
 
             // подвал
@@ -177,6 +179,7 @@ public class ParametersHouseTooba {
         return floors;
     }
 
+
     private RoofType findRoofType(String input) {
         RoofType roofType = RoofType.UNDEFINEDROOFTYPE;
         if (input != null) {
@@ -185,6 +188,7 @@ public class ParametersHouseTooba {
                     roofType = RoofType.TWOSLOPES;
                     break;
                 case "kopertowy":
+                case "czterospadowy":
                     roofType = RoofType.FOURSLOPES;
                     break;
                 case "wielospadowy":
@@ -192,6 +196,9 @@ public class ParametersHouseTooba {
                     break;
                 case "płaski":
                     roofType = RoofType.FLAT;
+                    break;
+                case "jednośladowy":
+                    roofType = RoofType.ONESLOPES;
                     break;
                 default:
                     roofType = RoofType.UNDEFINEDROOFTYPE;
@@ -274,17 +281,16 @@ public class ParametersHouseTooba {
 
     private String extractDescriptionFromPage(Document document) {
         String description = "";
-        try {
-            Element descriptionDiv = document.selectFirst("div#descOpisTooba.description");
+
+        Element descriptionDiv = document.selectFirst("div#descOpisTooba.description");
+        if (descriptionDiv != null) {
+            description = descriptionDiv.html();
+        } else {
+            descriptionDiv = document.selectFirst("div#descOpisPrj.description");
             if (descriptionDiv != null) {
                 description = descriptionDiv.html();
             }
-        } catch (ParseException e) {
-            log.warn("Не удалось получить описание проекта");
-            e.printStackTrace();
         }
         return description;
     }
-
-
 }
