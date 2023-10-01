@@ -30,14 +30,17 @@ public class ImagesParserTooba {
             LinkedList<ImageHouse> sectionImages = parseSection(document);
             LinkedList<ImageHouse> interiorImages = parseInterior(document);
             LinkedList<ImageHouse> exteriorImages = parseExterior(document);
+
             imageHouseList.addAll(floorsAndModel3DImages);
             imageHouseList.addAll(facadesImages);
             imageHouseList.addAll(sectionImages);
             imageHouseList.addAll(situationalPlanImages);
             imageHouseList.addAll(interiorImages);
             imageHouseList.addAll(exteriorImages);
+
             house.setImageHouseList(imageHouseList);
-            house.setDirSaveImages(createDir.createAllDir(house.getId(), house.getTitleEng(), allFoundImageTypes));
+            String imagesFolderPath = house.getId() + "_" + house.getTitleEng();
+            house.setDirSaveImages(createDir.createAllDir(imagesFolderPath, allFoundImageTypes));
             house = houseImageDownloader.saveImage(house);
         } catch (ParseException e) {
             log.error("Ошибка при парсинге картинок дома");
@@ -160,11 +163,23 @@ public class ImagesParserTooba {
                 imageHouse.setImageType(ImageType.LAYOUT);
                 imageHouse.setImageTag(ImageType.TAGFLOOR);
                 allFoundImageTypes.add(ImageType.LAYOUT);
+            } else if (type.contains("wymiary szczegółowe")) {
+                imageHouse.setImageType(ImageType.LAYOUT);
+                imageHouse.setImageTag(ImageType.TAGFLOOR);
+                allFoundImageTypes.add(ImageType.LAYOUT);
+            } else if (type.contains("Rzut strychu do aranżacji")) {
+                imageHouse.setImageType(ImageType.LAYOUT);
+                imageHouse.setImageTag(ImageType.TAGMANSARD);
+                allFoundImageTypes.add(ImageType.LAYOUT);
             } else if (type.contains("Rzut poddasza")) {
                 imageHouse.setImageType(ImageType.LAYOUT);
                 imageHouse.setImageTag(ImageType.TAGMANSARD);
                 allFoundImageTypes.add(ImageType.LAYOUT);
             } else if (type.contains("Rzut antresoli")) {
+                imageHouse.setImageType(ImageType.LAYOUT);
+                imageHouse.setImageTag(ImageType.TAGENTRESOL);
+                allFoundImageTypes.add(ImageType.LAYOUT);
+            } else if (type.contains("Rzut strychu")) {
                 imageHouse.setImageType(ImageType.LAYOUT);
                 imageHouse.setImageTag(ImageType.TAGENTRESOL);
                 allFoundImageTypes.add(ImageType.LAYOUT);

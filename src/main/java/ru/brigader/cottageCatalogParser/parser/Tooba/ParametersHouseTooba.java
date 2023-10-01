@@ -89,7 +89,12 @@ public class ParametersHouseTooba {
             // гараж
             String cssQueryGarage = "span.label:contains(Garaż) + span.val";
             Garage garage = findGarage(parseParameterString(document, cssQueryGarage));
-            if (garage != Garage.NON || garage != Garage.UNDEFINEDGARAGE) house.getOptions().setHasGarage(true);
+            if (garage == Garage.NON || garage == Garage.UNDEFINEDGARAGE) {
+                house.getOptions().setHasGarage(false);
+            } else {
+                house.getOptions().setHasGarage(true);
+
+            }
             house.getOptions().setGarage(garage);
 
             // подвал

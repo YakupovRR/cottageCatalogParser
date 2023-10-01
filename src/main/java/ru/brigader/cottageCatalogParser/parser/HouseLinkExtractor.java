@@ -23,7 +23,7 @@ public class HouseLinkExtractor {
 
     public void saveLinksToFile() {
         int startPage = 1;
-        int lastPage = 2;
+        int lastPage = 10;
         String firstPartUrl = "https://www.tooba.pl";
         log.info("Сохраняем ссылки с toolba.pl со страниц " + startPage + " по " + lastPage);
         LinkedList<String> allLinks = new LinkedList<>();

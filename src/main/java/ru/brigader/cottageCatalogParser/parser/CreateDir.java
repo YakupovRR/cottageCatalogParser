@@ -10,9 +10,9 @@ import java.util.HashSet;
 public class CreateDir {
 
 
-    public String createAllDir(int id, String titleEng, HashSet<ImageType> imageTypes) {
+    public String createAllDir(String imagesFolderPath, HashSet<ImageType> imageTypes) {
 
-        String dirProject = "c:" + "/" + "Houses" + "/" + id + "_" + titleEng + "/";
+        String dirProject = "c:" + "/" + "Houses" + "/" + imagesFolderPath + "/";
         File dirBase = new File(dirProject);
         createThisDir(dirBase);
         for (ImageType i : imageTypes) {

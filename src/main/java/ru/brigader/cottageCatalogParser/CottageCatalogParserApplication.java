@@ -31,15 +31,17 @@ public class CottageCatalogParserApplication {
     private static HouseLinkExtractor houseLinkExtractor = new HouseLinkExtractor();
     public static HousePageParser housePageParser = new HousePageParserTooba();
     private static HouseDb houseDb = new HouseDb();
-    private static ExecutorService executorService = Executors.newFixedThreadPool(2);
+    private static ExecutorService executorService = Executors.newFixedThreadPool(8);
 
 
     public static void main(String[] args) throws SQLException {
         SpringApplication.run(CottageCatalogParserApplication.class, args);
 
+
+        //     houseLinkExtractor.saveLinksToFile();
+
         Integer id = houseDb.getLastProjectId() + 1;
         log.info("Номер нового проекта " + id);
-        //   houseLinkExtractor.saveLinksToFile();
         LinkedList<House> houses = housePageParser.startParse(id, executorService);
         houseDb.saveProjectDb(houses);
         executorService.shutdown();

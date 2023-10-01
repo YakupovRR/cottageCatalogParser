@@ -13,6 +13,9 @@ import ru.brigader.cottageCatalogParser.model.Parameters.Enums.Floors;
 import ru.brigader.cottageCatalogParser.parser.HousePageParser;
 import ru.brigader.cottageCatalogParser.dataIO.CsvIO;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -34,55 +37,78 @@ public class HousePageParserTooba implements HousePageParser {
         LinkedList<House> houses = new LinkedList<>();
         LinkedList<String> urls = csvIO.outputCsv("url.csv");
         LinkedList<String> titles = csvIO.outputCsv("title.csv");
+        int[] ids = generateIdsArray(id, urls.size());
+
         AtomicInteger fallenSaved = new AtomicInteger(0);
-        for (int i = 0; i < urls.size(); i++) {
-            final int idCopy = id;
-            int finalI = i;
-            executorService.submit(() -> {
-                House house = new House();
-                house.setId(idCopy);
-                house.setTitle(titles.get(finalI));
-                house.setUrlSource(urls.get(finalI));
-                house.setTitleEng(transliterate(house.getTitle()));
-                log.info(idCopy + " Парсинг проекта " + house.getUrlSource());
-                try {
-                    house = parse(house);
-                    if (house != null) {
-                        houses.add(house);
-                    } else {
-                        fallenSaved.incrementAndGet();
-                    }
-                } catch (Exception e) {
-                    log.warn("Не сохранён проект: " + house.getUrlSource(), e);
-                    fallenSaved.incrementAndGet();
-                }
-            });
-            id++;
+
+        List<House> parsedHouses = parseAll(urls, executorService, titles, ids);
+
+        for (House house : parsedHouses) {
+            if (house != null) {
+                house.setId(id);
+                houses.add(house);
+                id++;
+            } else {
+                fallenSaved.incrementAndGet();
+            }
         }
         return houses;
     }
 
-    private House parse(House house) {
+
+    public List<House> parseAll(List<String> urls, ExecutorService executorService, List<String> titles, int[] ids) {
+        List<House> result = new ArrayList<>();
+        List<Future<House>> futures = new ArrayList<>();
+
+        for (int i = 0; i < urls.size(); i++) {
+            final String url = urls.get(i);
+            final String title = titles.get(i);
+            final int id = ids[i];
+
+            Future<House> future = executorService.submit(() -> parse(url, title, id));
+            futures.add(future);
+        }
+
+        for (Future<House> future : futures) {
+            try {
+                House house = future.get();
+                if (house != null) {
+                    result.add(house);
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("Ошибка в методе parseAll");
+            }
+        }
+
+        executorService.shutdown();
+
+        return result;
+    }
+
+    private House parse(String url, String title, int id) {
+        House house = new House();
+        house.setId(id);
+        house.setTitle(title);
+        house.setTitleEng(transliterate(title));
         try {
-            Document document = Jsoup.connect(house.getUrlSource()).get();
+            Document document = Jsoup.connect(url).get();
             ParametersHouseTooba parametersHouseTooba = new ParametersHouseTooba();
             house = parametersHouseTooba.parseParametersHouse(document, house);
             if (!checkingRequiredParameters(house)) {
-                log.warn("Проект " + house.getTitle() + " не сохранен - отсуствуют обязательные параметры");
+                log.warn("Проект " + house.getTitle() + " не сохранен - отсутствуют обязательные параметры");
                 return null;
             }
             ParametersRoomsTooba parametersRoomsTooba = new ParametersRoomsTooba();
             ImagesParserTooba imagesParserTooba = new ImagesParserTooba();
             house = parametersRoomsTooba.parseParametersRooms(document, house);
             house = imagesParserTooba.parseImages(document, house);
-
-        } catch (
-                IOException e) {
-            log.error("Ошибка при парсинге проекта");
+        } catch (IOException e) {
+            log.error("Ошибка при парсинге проекта", e);
             return null;
         }
         return house;
     }
+
 
     private String transliterate(String rusText) {
         try {
@@ -102,6 +128,18 @@ public class HousePageParserTooba implements HousePageParser {
                 house.getDimensions().getFloors().equals(Floors.UNDEFINEDFLOOR))
             checkPassed = false;
         return checkPassed;
+    }
+
+
+    private int[] generateIdsArray(int id, int length) {
+        int[] ids = new int[length];
+        ids[0] = id;
+
+        for (int i = 1; i < length; i++) {
+            ids[i] = id + i;
+        }
+
+        return ids;
     }
 
 

@@ -108,6 +108,7 @@ public class ParametersRoomsTooba {
                 title = "Кладовая";
                 break;
             case "pokój":
+            case "pokoj":
                 title = "Комната";
                 break;
             case "łazienka":
@@ -138,6 +139,7 @@ public class ParametersRoomsTooba {
             case "salon + kuchnia":
             case "salon + aneks kuchenny":
             case "salon + jadalnia + kuchnia":
+            case "salon / jadalnia":
                 title = "Кухня-гостиная";
                 break;
             case "śluza":
@@ -153,7 +155,11 @@ public class ParametersRoomsTooba {
                 break;
             case "hol":
             case "holl":
-            case " hol wejściowy":
+            case "hol wejściowy":
+            case "holl wejściowy":
+            case "holl - antresola":
+            case "hol - antresola":
+            case "hall - antresola":
                 title = "Холл";
                 break;
             case "pom. tech. z co":
@@ -186,7 +192,7 @@ public class ParametersRoomsTooba {
                 title = "Тамбур + гардероб";
                 break;
             case "pralnia":
-            case "Pom. gospodarcze - pralnia":
+            case "pom. gospodarcze - pralnia":
                 title = "Прачечная";
                 break;
             case "strych":
@@ -195,6 +201,7 @@ public class ParametersRoomsTooba {
             case "pokój / gabinet":
             case "pokój gościnny - gabinet":
             case "pokój - gabinet":
+            case "pokój / biuro":
                 title = "Комната / кабинет";
                 break;
             case "jadalnia":
@@ -207,7 +214,8 @@ public class ParametersRoomsTooba {
                 title = "Котельная - кладовая";
                 break;
             case "kotłownia + pralnia":
-            case "Kotłownia+pralnia":
+            case "kotłownia+pralnia":
+            case "kotłownia / pralnia":
                 title = "Котельная - прачечная";
                 break;
             case "powierzchnia":
@@ -216,9 +224,12 @@ public class ParametersRoomsTooba {
             case "antresola":
                 title = "Антресоль";
                 break;
-            case "Pom. gospodarcze - garderoba":
-            case "Aneks do pracy + garderoba":
+            case "pom. gospodarcze - garderoba":
+            case "aneks do pracy + garderoba":
                 title = "Подсобное помещение - гардероб";
+                break;
+            case "powierzchnia po podłodze":
+                title = "Площадь по полу";
                 break;
         }
         return title;
