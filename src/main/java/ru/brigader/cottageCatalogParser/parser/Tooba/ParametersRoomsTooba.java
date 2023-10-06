@@ -90,6 +90,7 @@ public class ParametersRoomsTooba {
 
         switch (titleOrg.toLowerCase()) {
             case "wiatrołap":
+            case "przedsionek":
                 title = "Тамбур";
                 break;
             case "przedpokój":
@@ -98,26 +99,48 @@ public class ParametersRoomsTooba {
             case "pokój dzienny":
             case "pokoj dzienny":
             case "salon":
+            case "aneks wypoczynkowy":
                 title = "Гостиная";
+                break;
+            case "salon/jadalnia":
+            case "salon+aneks jadalny":
+                title = "Гостиная - столовая";
+                break;
+            case "pokój dzienny + hol":
+                title = "Гостиная + холл";
                 break;
             case "kuchnia":
                 title = "Кухня";
                 break;
             case "spiżarnia":
             case "schowek":
+            case "magazyn":
+            case "spiżarka":
+            case "spizarnia":
                 title = "Кладовая";
                 break;
             case "pokój":
             case "pokoj":
+            case "pokój 1":
+            case "pokój 2":
+            case "pokój 3":
+            case "sypialnia + antresola":
                 title = "Комната";
                 break;
             case "łazienka":
+            case "lazienka":
                 title = "Ванная комната";
                 break;
             case "pom. gospodarcze":
                 title = "Котел";
                 break;
             case "sypialnia":
+            case "pom.gospodarcze":
+            case "pomieszczenie gospodarcze":
+            case "pom. gospod.*":
+            case "pom. gospodarcze / szatnia":
+            case "pom. pomocnicze":
+            case "pom. pomocnicze - pralnia":
                 title = "Подсобное помещение";
                 break;
             case "toaleta":
@@ -125,6 +148,8 @@ public class ParametersRoomsTooba {
                 title = "Туалет";
                 break;
             case "garaż":
+            case "garaż*":
+            case "garaż dwustanowiskowy":
                 title = "Гараж";
                 break;
             case "komunikacja":
@@ -136,10 +161,12 @@ public class ParametersRoomsTooba {
             case "kuchnia + jadalnia":
             case "salon z kuchnią":
             case "pokój dzienny + jadalnia":
+            case "pokój dzienny + jadalni":
             case "salon + kuchnia":
             case "salon + aneks kuchenny":
             case "salon + jadalnia + kuchnia":
             case "salon / jadalnia":
+            case "salon z jadalnią":
                 title = "Кухня-гостиная";
                 break;
             case "śluza":
@@ -147,6 +174,11 @@ public class ParametersRoomsTooba {
                 break;
             case "garderoba":
             case "szatnia":
+            case "wiatrołap - garderoba":
+            case "gardeorba":
+            case "garderoba (strych)":
+            case "garderoba (strych)*":
+            case "komunikacja + garderoba":
                 title = "Гардероб";
                 break;
             case "kotłownia":
@@ -160,16 +192,34 @@ public class ParametersRoomsTooba {
             case "holl - antresola":
             case "hol - antresola":
             case "hall - antresola":
+            case "hall":
+            case "hal":
+            case "hol + komunikacja":
+            case "hol - komunikacja":
+            case "holl / antresola":
+            case "holl + korytarz":
                 title = "Холл";
+                break;
+            case "hall + schody":
+            case "hol + schody":
+            case "hol +schody":
+                title = "Холл + лестница";
+                break;
+            case "hol i garderoba":
+                title = "Холл и гардероб";
                 break;
             case "pom. tech. z co":
             case "pom. techniczne":
+            case "pom. techniczne z C.O.":
                 title = "Тех.  помещение";
                 break;
             case "schody":
+            case "podest":
+            case "komunikacja + schody":
                 title = "Лестница";
                 break;
             case "korytarz":
+            case "korytarz/komunikacja":
                 title = "Коридор";
                 break;
             case "taras zadaszony":
@@ -193,22 +243,42 @@ public class ParametersRoomsTooba {
                 break;
             case "pralnia":
             case "pom. gospodarcze - pralnia":
+            case "pralnia-suszarnia":
+            case "pralnia / suszarnia":
+            case "pralnia - suszarnia":
+            case "pralnia*":
+            case "pralnia + suszarnia":
                 title = "Прачечная";
                 break;
             case "strych":
+            case "strych / antresola":
+            case "strych / poddasze":
+            case "strych - antresola nad salonem":
+            case "strych + antresola nad salonem":
+            case "pom. dodatkowe (strych)":
+            case "strych - antresola":
+            case "strych/poddasze":
+            case "poddasze do adptacji":
+            case "poddasze do adaptacji":
+            case "poddasze / antresola":
                 title = "Чердак";
                 break;
             case "pokój / gabinet":
             case "pokój gościnny - gabinet":
             case "pokój - gabinet":
             case "pokój / biuro":
+            case "pokój gościnyy - gabinet":
+            case "strych / pokój":
                 title = "Комната / кабинет";
+                break;
+            case "gabinet":
+                title = "Кабинет";
                 break;
             case "jadalnia":
                 title = "Столовая";
                 break;
-            case "spiżarka":
-                title = "Столовая";
+            case "jadalnia + schody":
+                title = "Столовая + лестница";
                 break;
             case "kotłownia + spiżarnia":
                 title = "Котельная - кладовая";
@@ -226,10 +296,25 @@ public class ParametersRoomsTooba {
                 break;
             case "pom. gospodarcze - garderoba":
             case "aneks do pracy + garderoba":
+            case "pom. gospodarcze / garderoba":
                 title = "Подсобное помещение - гардероб";
                 break;
             case "powierzchnia po podłodze":
                 title = "Площадь по полу";
+                break;
+            case "sauna":
+                title = "Сауна";
+                break;
+            case "pustka nad salonem":
+                title = "Второй свет";
+                break;
+            case "strefa wypocz. dzieci":
+                title = "Детская";
+                break;
+            case "komunikacja gospodarcza":
+            case "komunikacja - antresola":
+            case "komunikacja + aneks":
+                title = "Коммуникации";
                 break;
         }
         return title;

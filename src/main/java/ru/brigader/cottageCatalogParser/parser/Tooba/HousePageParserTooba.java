@@ -90,6 +90,7 @@ public class HousePageParserTooba implements HousePageParser {
         house.setId(id);
         house.setTitle(title);
         house.setTitleEng(transliterate(title));
+        house.setUrlSource(url);
         try {
             Document document = Jsoup.connect(url).get();
             ParametersHouseTooba parametersHouseTooba = new ParametersHouseTooba();
