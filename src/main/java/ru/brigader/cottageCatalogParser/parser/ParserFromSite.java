@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutorService;
 
 
 @Component
-public interface HousePageParser {
-    LinkedList<House> startParse(int id, ExecutorService executorService);
+public interface ParserFromSite {
+    LinkedList<House> parseProjects(int id, ExecutorService executorService);
 
 }

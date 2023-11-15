@@ -10,11 +10,10 @@ import org.jsoup.nodes.Document;
 import com.ibm.icu.text.Transliterator;
 import org.apache.commons.lang3.StringUtils;
 import ru.brigader.cottageCatalogParser.model.Parameters.Enums.Floors;
-import ru.brigader.cottageCatalogParser.parser.HousePageParser;
+import ru.brigader.cottageCatalogParser.parser.ParserFromSite;
 import ru.brigader.cottageCatalogParser.dataIO.CsvIO;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -27,13 +26,13 @@ import java.util.concurrent.ExecutorService;
 @Slf4j
 @Component
 @Setter
-public class HousePageParserTooba implements HousePageParser {
+public class ParserFromSiteTooba implements ParserFromSite {
 
     protected CsvIO csvIO;
     protected JsonIO jsonIO = new JsonIO();
 
     @Override
-    public LinkedList<House> startParse(int id, ExecutorService executorService) {
+    public LinkedList<House> parseProjects(int id, ExecutorService executorService) {
         LinkedList<House> houses = new LinkedList<>();
         LinkedList<String> urls = csvIO.outputCsv("url.csv");
         LinkedList<String> titles = csvIO.outputCsv("title.csv");

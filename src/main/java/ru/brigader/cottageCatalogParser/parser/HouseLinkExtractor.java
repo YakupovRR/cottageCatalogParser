@@ -21,9 +21,7 @@ public class HouseLinkExtractor {
     private CsvIO csvIO = new CsvIO();
     private String filePath ="url.csv";
 
-    public void saveLinksToFile() {
-        int startPage = 1;
-        int lastPage = 10;
+    public void saveLinksToFile(int startPage, int lastPage) {
         String firstPartUrl = "https://www.tooba.pl";
         log.info("Сохраняем ссылки с toolba.pl со страниц " + startPage + " по " + lastPage);
         LinkedList<String> allLinks = new LinkedList<>();
