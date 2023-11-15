@@ -13,9 +13,9 @@ import java.util.concurrent.Executors;
 @Slf4j
 public class Parser {
 
-    public static ParserFromSite parserFromSite = new ParserFromSiteTooba();
-    private static HouseDb houseDb = new HouseDb();
-    private static ExecutorService executorService = Executors.newFixedThreadPool(8);
+    private ParserFromSite parserFromSite = new ParserFromSiteTooba();
+    private HouseDb houseDb = new HouseDb();
+    private ExecutorService executorService = Executors.newFixedThreadPool(8);
 
     public void startParse () throws SQLException {
 

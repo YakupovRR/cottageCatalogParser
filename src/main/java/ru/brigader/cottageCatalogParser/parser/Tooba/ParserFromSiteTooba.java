@@ -55,7 +55,7 @@ public class ParserFromSiteTooba implements ParserFromSite {
     }
 
 
-    public List<House> parseAll(List<String> urls, ExecutorService executorService, List<String> titles, int[] ids) {
+    private List<House> parseAll(List<String> urls, ExecutorService executorService, List<String> titles, int[] ids) {
         List<House> result = new ArrayList<>();
         List<Future<House>> futures = new ArrayList<>();
 
